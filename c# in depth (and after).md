@@ -192,4 +192,4 @@ var (x, y) when x > 0 && y > 0 => Quadrant.One
 # C# 9
 
 - Records. You can create _init;_ modifier for the record property for it to be set only on initialization
--
+  -- lala
