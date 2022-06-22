@@ -192,4 +192,79 @@ var (x, y) when x > 0 && y > 0 => Quadrant.One
 # C# 9
 
 - Records. You can create _init;_ modifier for the record property for it to be set only on initialization
-  - lala
+  - You can make them mutable, but _shouldn't_
+- Positional properties
+
+```
+public record Person(string FirstName, string LastName);
+
+public static void Main()
+{
+    Person person = new("Nancy", "Davolio");
+    Console.WriteLine(person);
+    // output: Person { FirstName = Nancy, LastName = Davolio }
+}
+```
+
+Also adds "Deconstruct" with _out_ parameter for every positional property
+
+- ReferenceEquals for records return different for similar records, but Equals works like with Struct
+- with:
+
+```
+Person person2 = Person with Name='Vasily'
+```
+
+- Also good nice ToString is implemented inside record by default
+- Also you can derive record _from another record_. Equals then doesn't show that the derived equals parent, even if all the fields/properties are the same
+- Init setters are also available for classes
+- class Program with namespace can be skipped now
+- Nicer pattern matching:
+
+  - more fun with _is_
+
+    ```
+    public static bool IsLetterOrSeparator(this char c) =>
+        c is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or '.' or ',';
+    ```
+
+  - nicer null check:
+    ```
+    if(e is not null)
+    ```
+
+- nint and nuint (has different size depending on bitness of machine it runs on)
+- new() can be used as a parameter in a method call, constructor
+- static modifier to lambda and anonymous
+- also some stuff added for code generators
+
+# C# 10
+
+- record structs (readonly record structs)
+- you can write your own interpolation now
+- global using added (can do this with aliases)
+  - can be automatically added to whole assembly with <ImplicitUsings>)
+  - can remove specific implicit usings if you write
+  ```
+  <ItemGroup>
+  <Using Remove (add)="System.Threading.Tasks" />
+  </ItemGroup>
+  ```
+- File-scoped namespaces now available (without brackets for whole file)
+- Natural types for lambdas:
+
+```
+var parse = (string s) => int.Parse(s); // shouldn't use Func<string,int>
+```
+
+- Nice thing (works only for patterns):
+  ```
+  { Prop1.Prop2: pattern }
+  ```
+  is now equal to
+  ```
+  { Prop1: { Prop2: pattern } }
+  ```
+- Attributes now can be added to lambdas
+- Can seal ToString in a record
+-
