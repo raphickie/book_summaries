@@ -24,4 +24,12 @@ There is also an article about the WebHostBuilder and HostBuilder. Turned out af
 
 - AspnetCore 6 adds DeveloperExceptionPage, and only then everything else
 - **Use(Middleware) sets the order of middleware created** So ErrorHandlingMiddleware should go first
-- On exception, the whole middleware request is restarted, but for error page
+
+# 2
+
+There are PageModels, that are something between Model and Controller.
+They bypass Controller call, so rendering is coming straight to Pagemodel
+
+# 3
+
+Page 65
