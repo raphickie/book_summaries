@@ -55,11 +55,42 @@ UseStatusCodePagesWithReExecute vs UseStatusCodePagesMiddleware?
   - _EndpointRoutingMiddleware_ chooses which of endpoints to executes now (it is also called RoutingMiddleware) (_app.UseRouting_)
     So the RoutingMiddleware is getting the specific endpoint from the dictionary set in EndpointMiddleware, and EndpointMiddleware executes the endpoints
 
-  Page 134 (166)
+- You can add default value to the route parameter
+- You can add optional parameter (with '?')
+- Obviously you can specify constraints (type, length and others) for a route parameter
+- You can add params-like stuff with {\*\*others} in route. It's called _catch-all parameters_ Example: "products/{\*\*others} will match products/shoes/hats. _Note: catch-all parameters smell badly_
+- In catch-all parameters you can use one asterisk or two. One asterisk encodes forward slashes, and two-asterisk don't.
+- Route overlapping is pain in the butt; you should avoid it by
+- You can customize pascalcase vs dashes in Configure<RouteOptions>.
 
-  TODO: after chapter 5 play with middlewares: add custom ones after routing to see what it gives
-  TODO: after chapter 5 - what else does the endpoint routing have? MapConnections? What's that? MapConnectionHandler?
+[v] TODO: after chapter 5 play with middlewares: add custom ones after routing to see what it gives (routing parameters set in RouteValues)
 
-  TODO: try using razorpages to return JSON.
-  TODO: find out difference between websockets and signalr
-  TODO: try https://docs.microsoft.com/en-us/aspnet/core/web-api/handle-errors?view=aspnetcore-6.0
+# From https://docs.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-6.0#route-constraint-reference
+
+- If you don't write UseRouting, the routing middleware will still make it work, but all the custom middlewares will go after _useRouting_
+- There is such a thing as terminal middleware. Terminal middleware terminates all the middleware things, returning the response created.
+
+# 6 Model binding
+
+- Algorithm is:
+  - Model binding
+  - Model validation
+  - Page handler
+- Binding models can be useful for DRY and some other stuff.
+- If you want to bind property for GET requests, don't forget 'SupportsGet=true'
+
+That's all for #6 as the author mostly talks about razorpages there, really hard to distinguish
+
+# 7 Rendering HTML with Razor view
+
+- You can use ViewImports.cshtml to include common stuff like "using" in every view
+- ViewStart.cshtml is called before execution of each Razor Page
+
+That's all for Razor views - hopefully I'm not going to write a lot of code using it
+
+# 8 Building forms with tag helpers
+
+- (page 223)
+
+TODO: find out difference between websockets and signalr
+TODO: try https://docs.microsoft.com/en-us/aspnet/core/web-api/handle-errors?view=aspnetcore-6.0
