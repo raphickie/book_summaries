@@ -90,7 +90,30 @@ That's all for Razor views - hopefully I'm not going to write a lot of code usin
 
 # 8 Building forms with tag helpers
 
-- (page 223)
+Not really relevant - skipped
+
+# 9 Creating a Web Api for mobile/client applications using MVC
+
+- Just like in usual MVC, use AddControllers, UseEndpoints(+MapControllers)
+- _Controller_ base class should be used only for server-side MVC: the helpers defined there are useless in ApiController. ApiController should use _ControllerBase_ as parent
+- ApiController attribute:
+
+  - wraps not-ok-results into normal JSON class (standard ProblemDetails format; not working for NotFound, for example)
+  - Returns 400 automatically if model is invalid
+  - Automatically treats input model as [FromBody]
+  - You can change the default behaviour for ApiController in ConfigureApiBehaviorOptions
+
+- Token replacement is /api/[controller]
+
+# 9.6
+
+- Determining format of returned value is called _content negotiation_
+- Interesting: in Accept headers you
+  - (page 282)
 
 TODO: find out difference between websockets and signalr
 TODO: try https://docs.microsoft.com/en-us/aspnet/core/web-api/handle-errors?view=aspnetcore-6.0
+TODO: bit.ly/designBooksReview
+TODO: bit.ly/sysDesignPrimer
+TODO: bit.ly/EssArchIntro
+TODO: https://github.com/donnemartin/system-design-primer
