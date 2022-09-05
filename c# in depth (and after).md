@@ -3,7 +3,7 @@
 - Wow, iterators are IDisposable.
 - Wow, foreach uses Using inside. Also it creates a state machine: Current, Finally, Dispose and other fun stuff. It saves state of the iterator, it has a special finalizer etc.
 
-- Weird, but Partial classes can have partial classes inside them. I never needed to use that, but it's said that it is needed in the code generators
+- Partial classes can have partial classes inside them. I never needed to use that, but it's said that it is needed in the code generators
 
 - Static class cannot be used as a generic parameter (never needed that though)
 - :: is just an alias to a namespace
@@ -16,7 +16,7 @@
   -- call method for dynamic type
   -- compiler chooses which method to use
 
-# Dymamics
+# Dynamics
 
 - ExpandoObject: additional object from Dynamic. When using statically, it has Dictionary inside.
 - You cannot use extension methods for dynamic
@@ -57,7 +57,7 @@ static void ShowInfo(
   `public List<Friend> Friends {get;set;} = new List<Friends>();`
 
 - It's made easier to use getter-setter: you don't have to set everything in the constructor before using.
-- Expression=bodied stuff: "=>" appeared in properties (by the way, in cases of properties it's not lambda: there are no delegates created)
+- Expression=bodied stuff: "=>" appeared in properties (by the way, in case of properties it's not lambda: there are no delegates created)
 - => also appeared in operators
 
 # Strings.
@@ -135,6 +135,8 @@ can be replaced by
 public string Name { get; set; }
 ```
 
+so you can apply attribute to the hidden field in property
+
 # Book ends here. No my reading of latter releases of C#
 
 - Readonly properties in struct
@@ -183,7 +185,7 @@ var (x, y) when x > 0 && y > 0 => Quadrant.One
 - now if you create ref struct, it _should_ implement IDisposable
 - IAsyncEnumerable. They are created in a captured context (otherwise TaskAsyncEnumerableExtensions.ConfigureAwait should be added)
 - IAsyncDisposable: can be used with await using (has IAsyncEnumerator). Also captured context!
-- ^ operator: array[^1] = array[array.Length]
+- ^ operator: array[^1] = array[array.Length-1]
 - .. operator: [1..4].
   words[1..4] copies elements 1-3 to another array (no element 4)
 - ??= is really cool
@@ -267,4 +269,3 @@ var parse = (string s) => int.Parse(s); // shouldn't use Func<string,int>
   ```
 - Attributes now can be added to lambdas
 - Can seal ToString in a record
--
