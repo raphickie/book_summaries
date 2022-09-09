@@ -136,7 +136,116 @@ _messageSenders = messageSenders;
 }
 ```
 
+(Here and all the way down I try to add my feelings and expressions on things I read. That should help me understand the book better)
+
 - The DI just uses last implementation registered for the interface. That's exactly what puzzled me in one of our services, where come cached repo implementation was registered right after the normal one. In that case they had IService, and two implementations ServiceA and ServiceB. But worse: ServiceB was registered the last, _AND_ had IService in its constructor. I personally feel that's a smell.
+
+- Lifetime of a service:
+  - Transient
+  - Scoped
+  - Singleton
+- If you inject a scoped dependency into a singleton, the dependency in this scenario will also be a singleton, as it will be created only once. It's called _captured dependency_. So main rule is: inject the more singleton-like services into the transient ones, and not the other way around.
+- There is an automatic check for this, but it's slow, so use it only on dev stand (it also has flaws):
+
+```
+.UseDefaultServiceProvider(options =>
+{
+options.ValidateScopes = true;
+options.ValidateOnBuild = true;
+});
+```
+
+# 11 Configuration
+
+- UseDefaultWebHostBuilder uses standard setings for loading configuration.
+
+So, configuration.
+You set up the configuration providers in ConfigureAppConfiguration. You set the IConfigurationProviders in the builder, then write _Build_.
+There are plenty of configuration providers (XML, Json, CommandLine, Environment etc), but you also can write your own.
+CreateDefaultBuilder sets up:
+
+- JSON file provider (appsettings.ENV.json)
+- User secrets
+- Env variables
+- Command line arguments
+  If you decide to set all the providers customly in ConfigureAppConfiguration, don't forget to clear() them first
+
+You can address the configuration parameter like
+`Configuration["MapSettings:DefaultLocation:Latitude"]`
+instead of
+`Configuration.GetSection(...)`
+
+- There is such a thing as "User secrets manager", which manages user secrets for the local/development machine
+- You can add "ReloadOnChange" flag to the appsettings, to reload automatically, without redeploy, for example
+- In order to use settings class and refresh it every time the settings file is changed, use IOptionsSnapshot
+
+The order you add configuration determines the order it is called and overridden
+
+# 12 Saving data with EF Core
+
+- Skipped
+
+# 13 MVC and Razor Pages filter pipeline
+
+- There are filters in aspnetcore.
+  There are five types of filters:
+- authorization filters (filter out unauthorized requests)
+- resource filters (run before model binding and in the end of the request). Use case: add metrics, check content type etc.
+- action filters (run after model binding, so you can change the model that comes to controller)
+- exception filters (run in case of exception) (_can and mostly should be replaced with exception handling middleware_)
+- result filters (if the action method returns result, will be run before and after executing of IActionResult)
+
+Why do we need them?
+They are like middleware, but somehow different:
+
+- instead of middleware, you can customize which actions/controllers are gone through the filters. Middleware is applied to _everything_
+- filters contain such information as ModelState and IActionResult. Middleware generally can't get this data
+
+So basically, filters are middleware that can be applied to specific actions/controllers. This is the main rule: consider using only if customization needed for different requests.
+
+- Filters are executed in order from most global to most local. You can change this behaviour if your filter implements _IOrderedFilter_
+- Filters are basically attributes
+- When implementing filter, you can use `context.HttpContext.RequestServices` to get the service from DI. _BUT this is anti-pattern!_
+- If you want to catch exceptions in ApiController and return a valid ProblemResult, you should write an ExceptionFilter - especially when you're mixing webapi with razor pages
+- Each filter has async brother - better to implement async one, of course
+- If you want to run the filter even if some filters 'short circuited', use IAlwaysRunResultFilter
+- Short circuiting filters in aspnet core is really messy. If you get there, just open the docs, as it is absolutely _not_ transparent
+- DI inside a filter: Use `TypeFilterAttribute` or `ServiceFilterAttribute` for that.
+
+# 14 Authentication
+
+- There is HttpContext that's associated with every request. It has HttpContext.User in it. It is Principal. It is also called ClaimsPrincipal
+- ClaimsPrincipal has different Claims in it. Claim is actually any property of a user: email, phone number, and others.
+- On authorization we get the principal, encrypt it and send as a cookie
+- On subsequent requests browser sends the principal to the server, server decrypts it with AuthenticationMiddleware and checks the permissions. _Important: before the authentication middleware all the middleware see the request as unauthenticated_
+
+AspnetCore Identity is a usual solution when you need an Identity for your services. Almost always it's a good idea to use Identity Server.
+
+Well, there is a lot of info about the Identity Server, how to set it up and all. Probably will forget all of it to the time it's needed.
+
+# 15 Authorization
+
+- Apply [AllowAnonymous] to open publicly endpoints when you need to add [Authorize] attribute globally for the whole service
+
+## 15.2 Handling unauthorized requests
+
+If you're unauthorized, the AuthorizationMiddleware generates one of two different responses:
+
+- Challenge - means that you're not logged in. Response in webapi: 401
+- Forbid - means that you don't have enough rights. Response in webapi: 403
+
+When you want to make requests to specific action authorized, you put [Authorize] attribute (of course!)
+If you want to be specific (what should the user have), you put the requirement in the brackets inside the attribute. This "requirement" is called "policy"
+
+- You set up which policy requires which claims in `services.AddAuthorization` (requireClaim).
+- You also can require role, and not claim - (requireRole) BUT it's legacy and it's advised not to use that stuff.
+- You can implement IAuthorizationRequirement to add some logic to the requirement (for example, age of a user)
+- If you want to combine different policies, you can
+  - use policyBuilder when adding a policy, and
+  - write a handler that handles the logic, as IAuthorizationRequirement is purely data
+- Important thing that you can write several handlers for one requirement, and if even one of handlers succeed, the whole requirement is met
+
+(stopped here)
 
 TODO: find out difference between websockets and signalr
 TODO: try https://docs.microsoft.com/en-us/aspnet/core/web-api/handle-errors?view=aspnetcore-6.0
@@ -144,3 +253,7 @@ TODO: bit.ly/designBooksReview
 TODO: bit.ly/sysDesignPrimer
 TODO: bit.ly/EssArchIntro
 TODO: https://github.com/donnemartin/system-design-primer
+
+```
+
+```

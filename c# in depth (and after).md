@@ -11,12 +11,12 @@
 - #pragma - just for warnings, not errors
 - Expression q = (string x, string y) => x + y; - q.toString will return (x,y) => x+y. Cool.
 
-- Nice thing with Dynamic:
+# Dynamics
+
+- Nice practical use for Dynamic:
   -- create overloads for different parameter types
   -- call method for dynamic type
   -- compiler chooses which method to use
-
-# Dynamics
 
 - ExpandoObject: additional object from Dynamic. When using statically, it has Dictionary inside.
 - You cannot use extension methods for dynamic
