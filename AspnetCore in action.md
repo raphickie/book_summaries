@@ -105,11 +105,38 @@ Not really relevant - skipped
 
 - Token replacement is /api/[controller]
 
-# 9.6
-
 - Determining format of returned value is called _content negotiation_
-- Interesting: in Accept headers you
-  - (page 282)
+- Interesting: in Accept headers you can set weights for different content-types
+- Whe you return null, the WebApi by default returns NoContent (204)
+- If request comes from a browser, typically the response will use just default content-type, ignoring Accept header (but you can configure otherwise in program.cs:
+  `services.AddControllers(options => { options.RespectBrowserAcceptHeader = true; });)`
+
+# 10 Service configuration Dependency injection
+
+- Interesting thing, not widely used though: you can put an IEnumerable<T> in a constructor, register several T implementations, and have all of them during runtime:
+
+```
+public void ConfigureServices(IServiceCollection services)
+{
+services.AddControllers();
+services.AddScoped<IMessageSender, EmailSender>();
+services.AddScoped<IMessageSender, SmsSender>();
+services.AddScoped<IMessageSender, FacebookSender>();
+}
+
+...
+public class UserController:ControllerBase
+{
+  private readonly IEnumerable<IMessageSender> _messageSenders;
+public UserController(
+IEnumerable<IMessageSender> messageSenders)
+{
+_messageSenders = messageSenders;
+}
+}
+```
+
+- The DI just uses last implementation registered for the interface. That's exactly what puzzled me in one of our services, where come cached repo implementation was registered right after the normal one. In that case they had IService, and two implementations ServiceA and ServiceB. But worse: ServiceB was registered the last, _AND_ had IService in its constructor. I personally feel that's a smell.
 
 TODO: find out difference between websockets and signalr
 TODO: try https://docs.microsoft.com/en-us/aspnet/core/web-api/handle-errors?view=aspnetcore-6.0
