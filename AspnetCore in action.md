@@ -245,7 +245,14 @@ If you want to be specific (what should the user have), you put the requirement 
   - write a handler that handles the logic, as IAuthorizationRequirement is purely data
 - Important thing that you can write several handlers for one requirement, and if even one of handlers succeed, the whole requirement is met
 
-(stopped here)
+# 17 Logging
+- There are 3 parameters when considering logging:
+  - Provider
+  - Category
+  - Level
+You can set different combinations for different logging levels-providers-categories.
+- Logging scopes is a nice thing, you shouldn't forget that.
+
 
 TODO: find out difference between websockets and signalr
 TODO: try https://docs.microsoft.com/en-us/aspnet/core/web-api/handle-errors?view=aspnetcore-6.0
